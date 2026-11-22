@@ -1,0 +1,33 @@
+# Local development database for FlatLedger (T3).
+#   Start: docker compose up -d     Stop: docker compose stop
+# "name" fixes the Compose project, so every container, volume and network
+# is prefixed "flatledger" and other projects' containers are never touched.
+# Never use "docker system prune" or "docker volume prune": they affect
+# every project on this machine, not just FlatLedger.
+name: flatledger
+
+services:
+  postgres:
+    # Exact tag, never "latest". Keep in step with TestcontainersConfiguration.
+    image: postgres:18.7-alpine
+    environment:
+      POSTGRES_DB: flatledger
+      POSTGRES_USER: flatledger
+      # Local throwaway database only. Production credentials come from
+      # environment variables on the server (T7), never from this file.
+      POSTGRES_PASSWORD: flatledger-local-only
+    ports:
+      # 127.0.0.1 only: reachable from this Mac, not from the network.
+      # 5433 because 5432 is commonly taken by other projects.
+      - "127.0.0.1:5433:5432"
+    volumes:
+      # Postgres 18 images keep data under /var/lib/postgresql/18/...
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flatledger -d flatledger"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

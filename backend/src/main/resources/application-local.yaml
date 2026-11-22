@@ -1,4 +1,11 @@
 # Local development on this machine only.
+spring:
+  datasource:
+    # The Docker Compose database from compose.yaml (127.0.0.1:5433).
+    url: jdbc:postgresql://localhost:5433/flatledger
+    username: flatledger
+    password: flatledger-local-only
+
 management:
   endpoint:
     health:

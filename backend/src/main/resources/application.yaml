@@ -6,6 +6,13 @@ spring:
   profiles:
     # Running locally without choosing a profile means "local".
     default: local
+  jpa:
+    # The schema is owned by Flyway migrations; Hibernate only checks that
+    # the Java entities match it, and refuses to start if they don't.
+    hibernate:
+      ddl-auto: validate
+    # No lazy database access while rendering responses.
+    open-in-view: false
 
 server:
   # 8095, not 8080, so FlatLedger never fights a work app for the port.
