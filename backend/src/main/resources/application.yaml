@@ -1,0 +1,23 @@
+# Shared settings for every profile. Secrets never go in these files:
+# they come from environment variables at deploy time (T7).
+spring:
+  application:
+    name: flatledger
+  profiles:
+    # Running locally without choosing a profile means "local".
+    default: local
+
+server:
+  # 8095, not 8080, so FlatLedger never fights a work app for the port.
+  # Hosting platforms (T7) pass their own port in PORT.
+  port: ${PORT:8095}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only the health check is reachable over HTTP.
+        include: health
+  endpoint:
+    health:
+      show-details: never

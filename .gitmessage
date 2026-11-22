@@ -1,0 +1,11 @@
+
+# <type>: <short summary in present tense, max ~72 chars>
+#
+# Types: feat | fix | chore | docs | test | refactor | build | ci
+# Examples:
+#   feat: add equal split with paisa rounding
+#   fix: reject expense amount above the cap
+#   chore: initial project setup
+#
+# Body (optional): why the change was made, not what the diff shows.
+# Lines starting with '#' are ignored.

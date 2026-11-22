@@ -1,0 +1,5 @@
+# Local development on this machine only.
+management:
+  endpoint:
+    health:
+      show-details: always

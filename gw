@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# FlatLedger Gradle launcher (T1-b). Use instead of ./gradlew:  ./gw test
+# For this one command only, it:
+#   - uses Java 21, whatever your shell's default Java is
+#   - keeps Gradle's home (Gradle itself, caches, daemons) in .gradle-home/
+#     inside FlatLedger, so ~/.gradle is never read or written
+#   - refuses to run if inherited environment variables could change the app
+# Nothing is exported to your shell; nothing outside FlatLedger is changed.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Variables Spring, the JVM or Gradle would silently pick up from your shell.
+leaks="$(env | cut -d= -f1 | grep -E '^(SPRING_|SERVER_|MANAGEMENT_|ORG_GRADLE_|JAVA_TOOL_OPTIONS$|_JAVA_OPTIONS$|JDK_JAVA_OPTIONS$|JAVA_OPTS$|GRADLE_OPTS$)' || true)"
+if [[ -n "$leaks" && "${FLATLEDGER_ALLOW_ENV:-}" != "1" ]]; then
+  echo "gw: stopping, these environment variables would leak into FlatLedger:" >&2
+  echo "$leaks" | sed 's/^/  - /' >&2
+  echo "gw: unset them, or run with FLATLEDGER_ALLOW_ENV=1 if you set them on purpose." >&2
+  exit 1
+fi
+
+if ! JAVA21="$(/usr/libexec/java_home -v 21 2>/dev/null)"; then
+  echo "gw: Java 21 not found. Install a JDK 21; your default Java is not changed." >&2
+  exit 1
+fi
+
+export JAVA_HOME="$JAVA21"
+export GRADLE_USER_HOME="$ROOT/.gradle-home"
+
+cd "$ROOT/backend"
+exec ./gradlew "$@"
