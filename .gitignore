@@ -1,0 +1,33 @@
+# --- Gradle / Java (backend) ---
+# Project-local Gradle home (T1-b): keeps Gradle out of ~/.gradle
+.gradle-home/
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+*.class
+*.log
+hs_err_pid*
+
+# --- Node (frontend) ---
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+npm-debug.log*
+
+# --- Secrets / local env ---
+.env
+.env.*
+!.env.example
+
+# --- IDEs ---
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+out/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
