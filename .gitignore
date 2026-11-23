@@ -34,3 +34,6 @@ Thumbs.db
 
 # npm cache and logs used by ./nw
 .npm-cache/
+
+# Built page copied in by the Dockerfile only; never commit it
+backend/src/main/resources/static/

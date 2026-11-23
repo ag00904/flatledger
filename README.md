@@ -30,6 +30,16 @@ docker compose up -d --wait   # local Postgres on 127.0.0.1:5433
 
 Check it: `curl localhost:8095/api/ping`. Stop the database with `docker compose stop`.
 
+## One image (page + API)
+
+```bash
+docker build -t flatledger:local .
+docker run --rm -p 127.0.0.1:8095:8095 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/flatledger \
+  -e SPRING_DATASOURCE_USERNAME=flatledger -e SPRING_DATASOURCE_PASSWORD=flatledger-local-only \
+  flatledger:local              # page at http://127.0.0.1:8095, needs the compose database
+```
+
 ## Rules
 
 - Use `./gw`, not `backend/gradlew`: it pins Java 21 and keeps Gradle's files inside this folder.

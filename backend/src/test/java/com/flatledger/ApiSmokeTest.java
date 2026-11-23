@@ -49,6 +49,16 @@ class ApiSmokeTest {
         health.doesNotHavePath("$.components");
     }
 
+    // T5: in the image the built page sits in static/; src/test/resources/static/index.html stands in for it.
+    @Test
+    void rootServesThePage() {
+        assertThat(mvc.get().uri("/")).hasStatusOk().hasForwardedUrl("index.html");
+        assertThat(mvc.get().uri("/index.html"))
+                .hasStatusOk()
+                .bodyText()
+                .contains("FlatLedger test page");
+    }
+
     @Test
     void otherActuatorEndpointsAreNotExposed() {
         assertThat(mvc.get().uri("/actuator/env")).hasStatus(HttpStatus.NOT_FOUND);

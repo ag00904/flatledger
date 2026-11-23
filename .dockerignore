@@ -1,0 +1,21 @@
+# Only what the Dockerfile copies is needed; keep everything else out of the build.
+# Secrets and local settings
+.env
+.env.*
+**/.env
+**/.env.*
+# Git and editor folders
+.git
+.idea
+.vscode
+# Caches and build output (rebuilt inside the image)
+.gradle-home
+.npm-cache
+**/.gradle
+**/build
+**/node_modules
+**/dist
+**/coverage
+# Not needed to build
+*.md
+compose.yaml
