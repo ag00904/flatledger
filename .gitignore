@@ -31,3 +31,6 @@ out/
 # --- OS ---
 .DS_Store
 Thumbs.db
+
+# npm cache and logs used by ./nw
+.npm-cache/

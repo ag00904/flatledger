@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# FlatLedger npm launcher (T4-b). Use it instead of plain npm:
+#   ./nw ci | ./nw run dev | ./nw test | ./nw run lint | ./nw run build
+# - Uses the Node version in .nvmrc (via nvm), without switching your shell's Node.
+# - Keeps npm's cache and logs in .npm-cache/ inside this folder (not ~/.npm).
+# - Ignores any ~/.npmrc and global npmrc; only frontend/.npmrc applies.
+# - Stops if npm/Node environment variables from another project would leak in.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+leaks="$(env | cut -d= -f1 | grep -iE '^(npm_config_|NODE_OPTIONS$|NODE_PATH$|NODE_EXTRA_CA_CERTS$|VITE_)' || true)"
+if [[ -n "$leaks" && "${FLATLEDGER_ALLOW_ENV:-}" != "1" ]]; then
+  echo "nw: stopping, these environment variables would leak into FlatLedger:" >&2
+  echo "$leaks" | sed 's/^/  - /' >&2
+  echo "nw: unset them, or run with FLATLEDGER_ALLOW_ENV=1 if you set them on purpose." >&2
+  exit 1
+fi
+
+NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+  echo "nw: nvm not found at $NVM_DIR. Install Node $(cat "$ROOT/.nvmrc") via nvm." >&2
+  exit 1
+fi
+# shellcheck disable=SC1091
+source "$NVM_DIR/nvm.sh" --no-use
+WANT="$(cat "$ROOT/.nvmrc")"
+if ! NODE_BIN="$(nvm which "$WANT" 2>/dev/null)"; then
+  echo "nw: Node $WANT is not installed. Run: nvm install $WANT" >&2
+  exit 1
+fi
+export PATH="$(dirname "$NODE_BIN"):$PATH"
+
+mkdir -p "$ROOT/.npm-cache"
+export npm_config_cache="$ROOT/.npm-cache"
+export npm_config_logs_dir="$ROOT/.npm-cache/_logs"
+export npm_config_userconfig="$ROOT/.npm-cache/no-user-npmrc"
+export npm_config_globalconfig="$ROOT/.npm-cache/no-global-npmrc"
+export npm_config_update_notifier=false
+export npm_config_fund=false
+
+cd "$ROOT/frontend"
+exec npm "$@"
