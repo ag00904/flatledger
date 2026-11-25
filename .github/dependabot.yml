@@ -1,5 +1,7 @@
 # Dependabot (T6-d): weekly update pull requests, grouped, skipping releases younger than 7 days.
 # Nothing merges automatically; CI checks each pull request.
+# Major versions are skipped: Node 24, Java 21 and Postgres 18 are deliberate choices,
+# and moving to a new major is a planned task, not a weekly update.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -18,6 +20,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     groups:
       npm:
         patterns: ['*']
@@ -28,6 +33,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     groups:
       gradle:
         patterns: ['*']
@@ -38,6 +46,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: docker-compose
     directory: /
@@ -45,3 +56,6 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
