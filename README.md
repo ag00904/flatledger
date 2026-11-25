@@ -42,12 +42,18 @@ docker run --rm -p 127.0.0.1:8095:8095 \
 
 ## Deploy (Render + Neon, free tiers)
 
-- **Database:** Neon project `flatledger`, region Singapore, Postgres 18. Flyway creates the tables on first start.
-- **App:** Render web service from this repo, runtime Docker, region Singapore, auto-deploy after CI passes,
-  health check `/actuator/health`. Environment variables (set in Render, never in the repo):
+Live at https://flatledger-latest.onrender.com
+
+- **How a deploy happens:** on every push to `main`, CI builds the image and pushes it to
+  `ghcr.io/ag00904/flatledger`. When all three CI jobs pass, CI calls Render's deploy hook
+  (repo secret `RENDER_DEPLOY_HOOK_URL`) and Render runs that exact image. Render builds nothing.
+- **Database:** Neon project `flatledger`, region Singapore, Postgres 18. Flyway creates the tables on start.
+- **Render service:** existing image, region Singapore, free instance, health check `/actuator/health`.
+  Environment variables (set in Render, never in the repo):
   `SPRING_DATASOURCE_URL` (`jdbc:postgresql://<neon-host>/flatledger?sslmode=require`),
   `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`.
-- Free instances sleep after 15 idle minutes; the first visit afterwards takes about a minute.
+- Free instances sleep after 15 idle minutes; the next visit waits for the app to start again
+  (about 2 minutes on the free 0.1 CPU).
 
 ## Rules
 
