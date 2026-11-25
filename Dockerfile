@@ -4,7 +4,7 @@
 # Settings come from environment variables at run time; nothing secret is in the image.
 
 # --- Stage 1: build the page (thrown away after the build) ---
-FROM node:24.22.3-alpine AS web
+FROM node:26.13.1-alpine AS web
 WORKDIR /src/frontend
 COPY frontend/package.json frontend/package-lock.json frontend/.npmrc ./
 # npm's download cache lives in Docker's build cache, not on the host.
