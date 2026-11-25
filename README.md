@@ -40,6 +40,15 @@ docker run --rm -p 127.0.0.1:8095:8095 \
   flatledger:local              # page at http://127.0.0.1:8095, needs the compose database
 ```
 
+## Deploy (Render + Neon, free tiers)
+
+- **Database:** Neon project `flatledger`, region Singapore, Postgres 18. Flyway creates the tables on first start.
+- **App:** Render web service from this repo, runtime Docker, region Singapore, auto-deploy after CI passes,
+  health check `/actuator/health`. Environment variables (set in Render, never in the repo):
+  `SPRING_DATASOURCE_URL` (`jdbc:postgresql://<neon-host>/flatledger?sslmode=require`),
+  `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`.
+- Free instances sleep after 15 idle minutes; the first visit afterwards takes about a minute.
+
 ## Rules
 
 - Use `./gw`, not `backend/gradlew`: it pins Java 21 and keeps Gradle's files inside this folder.

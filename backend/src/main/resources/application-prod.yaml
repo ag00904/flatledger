@@ -1,1 +1,17 @@
-# Production (T7). Health details stay hidden (inherited "never").
+# Production (T7: Render + Neon). Health details stay hidden (inherited "never").
+# The database comes from environment variables set in Render, never from this file:
+#   SPRING_DATASOURCE_URL       jdbc:postgresql://<neon-host>/flatledger?sslmode=require
+#   SPRING_DATASOURCE_USERNAME
+#   SPRING_DATASOURCE_PASSWORD
+# PORT is set by Render; SPRING_PROFILES_ACTIVE=prod is set in the Docker image.
+spring:
+  datasource:
+    hikari:
+      # T7-d: a small pool that closes idle connections, so Neon's free compute can suspend.
+      maximum-pool-size: 5
+      minimum-idle: 0
+      idle-timeout: 60000 # milliseconds (Hikari takes a plain number)
+
+server:
+  # Render's proxy terminates https; trust its X-Forwarded-* headers so the app sees the real scheme and host.
+  forward-headers-strategy: framework
