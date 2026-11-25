@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/home/gradle/.gradle gradle --no-daemon bootJar \
  && cp build/libs/flatledger-0.0.1-SNAPSHOT.jar /app.jar
 
 # --- Stage 3: what runs (only Java and the jar) ---
-FROM eclipse-temurin:21.0.13.1_2-jre-alpine
+FROM eclipse-temurin:24.0.2_12-jre-alpine
 RUN addgroup -S flatledger && adduser -S -G flatledger flatledger
 WORKDIR /app
 COPY --from=app /app.jar app.jar
